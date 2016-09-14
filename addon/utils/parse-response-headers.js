@@ -1,4 +1,4 @@
-const CLRF = '\u000d\u000a';
+const CLRF = '\n';
 
 export default function parseResponseHeaders(headersString) {
   let headers = {};
