@@ -51,6 +51,13 @@ module.exports = {
           'ember': 'canary'
         }
       }
+    },
+    {
+      name: 'fastboot-addon-tests',
+      command: 'ember fastboot:test',
+      bower: {
+        dependencies: { }
+      }
     }
   ]
 };
