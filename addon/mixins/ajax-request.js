@@ -29,7 +29,6 @@ const {
   $,
   A,
   Error: EmberError,
-  Logger,
   Mixin,
   RSVP: { Promise },
   Test,
@@ -558,7 +557,7 @@ export default Mixin.create({
     } else if (typeof matcher === 'string') {
       return matcher === host;
     } else {
-      Logger.warn('trustedHosts only handles strings or regexes.', matcher, 'is neither.');
+      console.warn('trustedHosts only handles strings or regexes.', matcher, 'is neither.');
       return false;
     }
   },
