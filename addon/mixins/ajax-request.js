@@ -1,3 +1,13 @@
+import $ from 'jquery';
+import Mixin from '@ember/object/mixin';
+import { Promise } from 'rsvp';
+import { A, isArray } from '@ember/array';
+import { get } from '@ember/object';
+import { merge } from '@ember/polyfills';
+import { warn, runInDebug } from '@ember/debug';
+import { isEmpty, isNone } from '@ember/utils';
+import { run } from '@ember/runloop';
+
 import Ember from 'ember';
 import {
   AjaxError,
@@ -26,21 +36,8 @@ import { RequestURL } from '../utils/url-helpers';
 import ajax from '../utils/ajax';
 
 const {
-  $,
-  A,
   Error: EmberError,
-  Mixin,
-  RSVP: { Promise },
-  Test,
-  get,
-  isArray,
-  isEmpty,
-  isNone,
-  merge,
-  run,
-  runInDebug,
-  testing,
-  warn
+  Test
 } = Ember;
 const JSONAPIContentType = 'application/vnd.api+json';
 
@@ -81,7 +78,7 @@ function isString(object) {
 }
 
 let pendingRequestCount = 0;
-if (testing) {
+if (Ember.testing) {
   Test.registerWaiter(function() {
     return pendingRequestCount === 0;
   });

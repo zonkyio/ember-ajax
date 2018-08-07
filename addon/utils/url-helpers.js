@@ -8,7 +8,7 @@ const completeUrlRegex = /^(http|https)/;
  * Borrowed from
  * http://www.sitepoint.com/url-parsing-isomorphic-javascript/
  */
-const isNode = (typeof module === 'object' && module.exports);
+// const isNode = (typeof module === 'object' && module.exports);
 const url = getUrlModule();
 
 /**
@@ -21,12 +21,12 @@ const url = getUrlModule();
 function getUrlModule() {
   if (isFastBoot) {
     // ember-fastboot-server provides the node url module as URL global
-    return URL;
+    return FastBoot.require('url');
   }
 
-  if (isNode) {
-    return require('url');
-  }
+  // if (isNode) {
+  //   return require('url');
+  // }
 
   return document.createElement('a');
 }
@@ -51,7 +51,7 @@ function getUrlModule() {
  */
 function parseUrl(str) {
   let fullObject;
-  if (isNode || isFastBoot) {
+  if (isFastBoot) {
     fullObject = url.parse(str);
   } else {
     url.href = str;
