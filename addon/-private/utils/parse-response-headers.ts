@@ -1,6 +1,6 @@
 import { Headers } from '../types';
 
-export const CRLF = '\u000d\u000a';
+export const CRLF = typeof FastBoot === 'undefined' ? '\u000d\u000a' : '\n';
 
 export default function parseResponseHeaders(headersString: string): Headers {
   const headers = {};
