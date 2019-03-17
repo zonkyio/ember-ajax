@@ -35,7 +35,7 @@ describe('Unit | Mixin | ajax request', function() {
 
   describe('options method', function() {
     it('sets raw data', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       const url = '/test';
       const type = 'GET';
       const ajaxOptions = service.options(url, {
@@ -56,7 +56,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('sets options correctly', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       const url = '/test';
       const type = 'POST';
       const data = JSON.stringify({ key: 'value' });
@@ -77,7 +77,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('does not modify the options object argument', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       const url = 'test';
       const data = JSON.stringify({ key: 'value' });
       const baseOptions = { type: 'POST', data };
@@ -86,7 +86,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('does not override contentType when defined', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       const url = '/test';
       const type = 'POST';
       const data = JSON.stringify({ key: 'value' });
@@ -107,7 +107,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('can handle empty data', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       const url = '/test';
       const type = 'POST';
       const ajaxOptions = service.options(url, { type });
@@ -133,7 +133,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new MonitorOptionsCalls();
+      const service = MonitorOptionsCalls.create();
       return service.request('/foo').then(function() {
         expect(numberOptionsCalls).to.equal(1);
       });
@@ -151,7 +151,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new MonitorOptionsCalls();
+      const service = MonitorOptionsCalls.create();
       return service.raw('/foo').then(function() {
         expect(numberOptionsCalls).to.equal(1);
       });
@@ -163,7 +163,7 @@ describe('Unit | Mixin | ajax request', function() {
           host: 'https://discuss.emberjs.com'
         });
 
-        const service = new RequestWithHost();
+        const service = RequestWithHost.create();
         const url = '/users/me';
         const ajaxoptions = service.options(url);
 
@@ -177,7 +177,7 @@ describe('Unit | Mixin | ajax request', function() {
           host: 'https://discuss.emberjs.com'
         });
 
-        const service = new RequestWithHost();
+        const service = RequestWithHost.create();
         const url = 'users/me';
         const ajaxoptions = service.options(url);
 
@@ -191,7 +191,7 @@ describe('Unit | Mixin | ajax request', function() {
           host: 'https://discuss.emberjs.com'
         });
 
-        const service = new RequestWithHost();
+        const service = RequestWithHost.create();
         const url = 'users/me';
         const host = 'https://myurl.com';
         const ajaxoptions = service.options(url, { host });
@@ -204,7 +204,7 @@ describe('Unit | Mixin | ajax request', function() {
           host: 'https://discuss.emberjs.com',
           namespace: 'api/v1'
         });
-        const service = new RequestWithHostAndNamespace();
+        const service = RequestWithHostAndNamespace.create();
         const url = 'users/me';
         const ajaxoptions = service.options(url);
 
@@ -218,7 +218,7 @@ describe('Unit | Mixin | ajax request', function() {
           host: 'https://discuss.emberjs.com',
           namespace: '/api/v1'
         });
-        const service = new RequestWithHostAndNamespace();
+        const service = RequestWithHostAndNamespace.create();
         const url = 'users/me';
         const ajaxoptions = service.options(url);
 
@@ -232,11 +232,27 @@ describe('Unit | Mixin | ajax request', function() {
           host: 'https://discuss.emberjs.com',
           namespace: '/api/v1'
         });
-        const service = new RequestWithHostAndNamespace();
-        const url = '/api/v1/users/me';
-        const ajaxoptions = service.options(url);
+        const service = RequestWithHostAndNamespace.create();
 
-        expect(ajaxoptions.url).to.equal(
+        expect(service.options('/api/v1/users/me').url).to.equal(
+          'https://discuss.emberjs.com/api/v1/users/me'
+        );
+        expect(service.options('api/v1/users/me').url).to.equal(
+          'https://discuss.emberjs.com/api/v1/users/me'
+        );
+      });
+
+      it('is set on the url containing namespace no leading slash', function() {
+        const RequestWithHostAndNamespace = AjaxRequest.extend({
+          host: 'https://discuss.emberjs.com',
+          namespace: 'api/v1'
+        });
+        const service = RequestWithHostAndNamespace.create();
+
+        expect(service.options('/api/v1/users/me').url).to.equal(
+          'https://discuss.emberjs.com/api/v1/users/me'
+        );
+        expect(service.options('api/v1/users/me').url).to.equal(
           'https://discuss.emberjs.com/api/v1/users/me'
         );
       });
@@ -245,7 +261,7 @@ describe('Unit | Mixin | ajax request', function() {
         const RequestWithHostAndNamespace = AjaxRequest.extend({
           host: '//'
         });
-        const service = new RequestWithHostAndNamespace();
+        const service = RequestWithHostAndNamespace.create();
         const url = 'users/me';
         const ajaxoptions = service.options(url);
 
@@ -256,7 +272,7 @@ describe('Unit | Mixin | ajax request', function() {
         const RequestWithHostAndNamespace = AjaxRequest.extend({
           host: '//'
         });
-        const service = new RequestWithHostAndNamespace();
+        const service = RequestWithHostAndNamespace.create();
         const url = '/users/me';
         const ajaxoptions = service.options(url);
 
@@ -270,14 +286,14 @@ describe('Unit | Mixin | ajax request', function() {
           namespace: '/api/v1'
         });
 
-        const service = new RequestWithHost();
+        const service = RequestWithHost.create();
 
         expect(service.options('/users/me').url).to.equal('/api/v1/users/me');
         expect(service.options('users/me').url).to.equal('/api/v1/users/me');
       });
 
       it('can be set on a per-request basis', function() {
-        const service = new AjaxRequest();
+        const service = AjaxRequest.create();
 
         expect(service.options('users/me', { namespace: '/api' }).url).to.equal(
           '/api/users/me'
@@ -292,7 +308,7 @@ describe('Unit | Mixin | ajax request', function() {
           namespace: 'api/v1'
         });
 
-        const service = new RequestWithHost();
+        const service = RequestWithHost.create();
 
         expect(service.options('/users/me').url).to.equal('api/v1/users/me');
         expect(service.options('users/me').url).to.equal('api/v1/users/me');
@@ -301,7 +317,7 @@ describe('Unit | Mixin | ajax request', function() {
 
     describe('type', function() {
       it('defaults to GET', function() {
-        const service = new AjaxRequest();
+        const service = AjaxRequest.create();
         const url = 'test';
         const ajaxOptions = service.options(url);
 
@@ -319,13 +335,13 @@ describe('Unit | Mixin | ajax request', function() {
       }
     }
 
-    const service = new AjaxServiceWithDefaultContentType();
+    const service = AjaxServiceWithDefaultContentType.create();
     const options = service.options('');
     expect(options.contentType).to.equal(defaultContentType);
   });
 
   it('request() promise label is correct', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const url = '/posts';
     const data = {
       type: 'POST',
@@ -350,7 +366,7 @@ describe('Unit | Mixin | ajax request', function() {
   });
 
   it('post() promise label is correct', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const url = '/posts';
     const title = 'Title';
     const description = 'Some description.';
@@ -376,7 +392,7 @@ describe('Unit | Mixin | ajax request', function() {
   });
 
   it('put() promise label is correct', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const url = '/posts/1';
     const title = 'Title';
     const description = 'Some description.';
@@ -404,7 +420,7 @@ describe('Unit | Mixin | ajax request', function() {
   });
 
   it('patch() promise label is correct', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const url = '/posts/1';
     const description = 'Some description.';
     const options = {
@@ -430,7 +446,7 @@ describe('Unit | Mixin | ajax request', function() {
   });
 
   it('del() promise label is correct', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const url = '/posts/1';
     const serverResponse = [
       200,
@@ -449,7 +465,7 @@ describe('Unit | Mixin | ajax request', function() {
   });
 
   it('delete() promise label is correct', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const url = '/posts/1';
     const serverResponse = [
       200,
@@ -482,7 +498,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
     this.server.post(url, () => serverResponse);
 
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     const handleResponse = td.function('handle response');
     const expectedArguments = [
       anything(),
@@ -504,7 +520,7 @@ describe('Unit | Mixin | ajax request', function() {
         host: 'https://discuss.emberjs.com'
       });
 
-      const service = new RequestWithHost();
+      const service = RequestWithHost.create();
       const url = 'http://myurl.com/users/me';
       const ajaxOptions = service.options(url);
 
@@ -512,7 +528,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('overrides host property in request config', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       const host = 'https://discuss.emberjs.com';
       const url = 'http://myurl.com/users/me';
       const ajaxOptions = service.options(url, { host });
@@ -525,7 +541,7 @@ describe('Unit | Mixin | ajax request', function() {
         host: 'https://discuss.emberjs.com'
       });
 
-      const service = new RequestWithHost();
+      const service = RequestWithHost.create();
       const url = 'myurl.com/users/me';
       const ajaxOptions = service.options(url);
 
@@ -552,7 +568,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       return service.request('http://example.com/test');
     });
 
@@ -571,7 +587,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       return service.request('/some/relative/url');
     });
 
@@ -591,7 +607,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       return service.request('http://my.example.com');
     });
 
@@ -611,7 +627,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       return service.request('http://foo.bar.com');
     });
 
@@ -630,7 +646,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       return service.request('http://example.com');
     });
 
@@ -650,7 +666,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       return service.request('http://example.com', {
         headers: {
           'Per-Request-Key': 'Some value'
@@ -666,7 +682,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       });
 
-      const service = new RequestWithHeaders();
+      const service = RequestWithHeaders.create();
       const headers = { 'Third-Value': 'Other Thing' };
       expect(Object.keys(service._getFullHeadersHash()).length).to.equal(2);
       expect(Object.keys(service._getFullHeadersHash(headers)).length).to.equal(
@@ -684,7 +700,7 @@ describe('Unit | Mixin | ajax request', function() {
     ];
     this.server.get('/posts', () => response);
 
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     return service
       .request('/posts')
       .then(function() {
@@ -706,7 +722,7 @@ describe('Unit | Mixin | ajax request', function() {
     ];
     this.server.get('/posts', () => response);
 
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     return service
       .request('/posts')
       .then(function() {
@@ -721,7 +737,7 @@ describe('Unit | Mixin | ajax request', function() {
   });
 
   it('it throws an error when the user tries to use `.get` to make a request', function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
     service.set('someProperty', 'foo');
 
     expect(service.get('someProperty')).to.equal('foo');
@@ -746,7 +762,7 @@ describe('Unit | Mixin | ajax request', function() {
       contentType: 'application/json'
     });
 
-    const service = new RequestWithHeaders();
+    const service = RequestWithHeaders.create();
     return service.post('/test', {
       data: {
         foo: 'bar'
@@ -765,7 +781,7 @@ describe('Unit | Mixin | ajax request', function() {
       contentType: 'application/vnd.api+json'
     });
 
-    const service = new RequestWithHeaders();
+    const service = RequestWithHeaders.create();
     return service.post('/test', {
       data: {
         foo: 'bar'
@@ -786,7 +802,7 @@ describe('Unit | Mixin | ajax request', function() {
       }
     });
 
-    const service = new RequestWithHeaders();
+    const service = RequestWithHeaders.create();
     return service.post('/test', {
       data: {
         foo: 'bar'
@@ -807,7 +823,7 @@ describe('Unit | Mixin | ajax request', function() {
       }
     });
 
-    const service = new RequestWithHeaders();
+    const service = RequestWithHeaders.create();
     return service.post('/test', {
       data: {
         foo: 'bar'
@@ -828,7 +844,7 @@ describe('Unit | Mixin | ajax request', function() {
       }
     });
 
-    const service = new RequestWithHeaders();
+    const service = RequestWithHeaders.create();
     return service.request('/test', {
       data: {
         foo: 'bar'
@@ -849,7 +865,7 @@ describe('Unit | Mixin | ajax request', function() {
       }
     });
 
-    const service = new RequestWithHeaders();
+    const service = RequestWithHeaders.create();
     return service.post('/test', {
       data: {
         foo: 'bar'
@@ -905,7 +921,7 @@ describe('Unit | Mixin | ajax request', function() {
       NamespaceTwoSlash,
       NamespaceNoSlash
     ].forEach(Klass => {
-      const req = new Klass();
+      const req = Klass.create();
 
       hosts.forEach(exampleHost => {
         const { host } = exampleHost;
@@ -927,26 +943,15 @@ describe('Unit | Mixin | ajax request', function() {
       });
     });
 
-    it('correctly handles a host without a namespace', function() {
-      class HostWithoutNamespace extends AjaxRequest {
-        get host() {
-          return 'http://foo.com';
-        }
-      }
-
-      const req = new HostWithoutNamespace();
-      expect(req._buildURL('baz')).to.equal('http://foo.com/baz');
-    });
-
     it('correctly handles a host provided on the request options', function() {
-      const req = new AjaxRequest();
+      const req = AjaxRequest.create();
       expect(req._buildURL('/baz', { host: 'http://foo.com' })).to.equal(
         'http://foo.com/baz'
       );
     });
 
     it('correctly handles no namespace or host', function() {
-      const req = new AjaxRequest();
+      const req = AjaxRequest.create();
       expect(req._buildURL('/baz')).to.equal('/baz');
       expect(req._buildURL('baz')).to.equal('baz');
     });
@@ -958,7 +963,7 @@ describe('Unit | Mixin | ajax request', function() {
         }
       }
 
-      const req = new RequestWithNamespace();
+      const req = RequestWithNamespace.create();
       expect(req._buildURL('/api/post')).to.equal(
         '/api/post',
         'URL provided with leading slash'
@@ -976,28 +981,65 @@ describe('Unit | Mixin | ajax request', function() {
         }
       }
 
-      const req = new RequestWithNamespace();
+      const req = RequestWithNamespace.create();
       expect(req._buildURL('/admin_users/post')).to.equal(
         'admin/admin_users/post'
       );
     });
 
-    it('does not build the URL if the host is already present', function() {
-      class RequestWithHost extends AjaxRequest {
-        get host() {
-          return 'https://foo.com';
+    describe('building relative URLs', function() {
+      it('works with a relative namespace with no trailing slash', function() {
+        class RelativeNamespace extends AjaxRequest {
+          get namespace() {
+            return 'api/v1';
+          }
         }
-      }
 
-      const req = new RequestWithHost();
-      expect(req._buildURL('https://foo.com/posts')).to.equal(
-        'https://foo.com/posts'
-      );
+        const req = RelativeNamespace.create();
+        expect(req._buildURL('foobar')).to.equal('api/v1/foobar');
+      });
+
+      it('works with a relative namespace with a trailing slash', function() {
+        class RelativeNamespace extends AjaxRequest {
+          get namespace() {
+            return 'api/v1/';
+          }
+        }
+
+        const req = RelativeNamespace.create();
+        expect(req._buildURL('foobar')).to.equal('api/v1/foobar');
+      });
+    });
+
+    describe('building a URL with a host', function() {
+      it('correctly handles a host without a namespace', function() {
+        class HostWithoutNamespace extends AjaxRequest {
+          get host() {
+            return 'http://foo.com';
+          }
+        }
+
+        const req = HostWithoutNamespace.create();
+        expect(req._buildURL('baz')).to.equal('http://foo.com/baz');
+      });
+
+      it('does not build the URL if the host is already present', function() {
+        class RequestWithHost extends AjaxRequest {
+          get host() {
+            return 'https://foo.com';
+          }
+        }
+
+        const req = RequestWithHost.create();
+        expect(req._buildURL('https://foo.com/posts')).to.equal(
+          'https://foo.com/posts'
+        );
+      });
     });
   });
 
   it("it doesn't reassign payloads which evaluate falsey", function() {
-    const service = new AjaxRequest();
+    const service = AjaxRequest.create();
 
     const payloadWithFalseyString = service.handleResponse(200, {}, '');
     expect(payloadWithFalseyString).to.be.empty;
@@ -1021,7 +1063,7 @@ describe('Unit | Mixin | ajax request', function() {
         return [200, {}, `${req.queryParams.callback}({ "foo": "bar" })`];
       });
 
-      const ajax = new AjaxRequest();
+      const ajax = AjaxRequest.create();
       return ajax
         .request('/jsonp', {
           dataType: 'jsonp'
@@ -1035,7 +1077,7 @@ describe('Unit | Mixin | ajax request', function() {
   describe('error handlers', function() {
     it('handles a TimeoutError correctly', function() {
       this.server.get('/posts', jsonFactory(200), 2);
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       return service
         .request('/posts', { timeout: 1 })
         .then(function() {
@@ -1056,7 +1098,7 @@ describe('Unit | Mixin | ajax request', function() {
             errors: [{ id: 1, message: 'error description' }]
           })
         );
-        const service = new AjaxRequest();
+        const service = AjaxRequest.create();
         return service
           .request('/posts')
           .then(function() {
@@ -1101,7 +1143,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('can wait on an AJAX GET request', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       service.request('/test');
 
       return wait().then(() => {
@@ -1110,7 +1152,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('can wait on an AJAX POST request', function() {
-      const service = new AjaxRequest();
+      const service = AjaxRequest.create();
       service.post('/test');
 
       return wait().then(() => {
@@ -1125,7 +1167,7 @@ describe('Unit | Mixin | ajax request', function() {
         return [200, {}, `${req.queryParams.callback}({ "foo": "bar" })`];
       });
 
-      const ajax = new AjaxRequest();
+      const ajax = AjaxRequest.create();
       ajax
         .request('/jsonp', { dataType: 'jsonp' })
         .then(val => (response = val));
@@ -1141,7 +1183,7 @@ describe('Unit | Mixin | ajax request', function() {
     });
 
     it('attaches the XHR for the request to the promise object', function() {
-      const ajax = new AjaxRequest();
+      const ajax = AjaxRequest.create();
       const promise = ajax.request('/foo');
 
       expect(promise.xhr).to.be.ok;
@@ -1150,7 +1192,7 @@ describe('Unit | Mixin | ajax request', function() {
     // Note: the `.catch` handler _must_ be set up before the request is aborted
     // Without that, the rejection will be treated as un-handled
     it('can be used to abort the request', function() {
-      const ajax = new AjaxRequest();
+      const ajax = AjaxRequest.create();
       const promise = ajax
         .request('/foo')
         .then(() => {
@@ -1168,28 +1210,28 @@ describe('Unit | Mixin | ajax request', function() {
 
     describe('passing the XHR to child promises', function() {
       it('keeps the XHR property through child promises (then)', function() {
-        const ajax = new AjaxRequest();
+        const ajax = AjaxRequest.create();
         const promise = ajax.request('/foo').then(response => response);
 
         expect(promise.xhr).to.be.ok;
       });
 
       it('keeps the XHR property through child promises (catch)', function() {
-        const ajax = new AjaxRequest();
+        const ajax = AjaxRequest.create();
         const promise = ajax.request('/foo').catch(response => response);
 
         expect(promise.xhr).to.be.ok;
       });
 
       it('keeps the XHR property through child promises (finally)', function() {
-        const ajax = new AjaxRequest();
+        const ajax = AjaxRequest.create();
         const promise = ajax.request('/foo').finally(response => response);
 
         expect(promise.xhr).to.be.ok;
       });
 
       it('keeps the XHR property through child promises (multiple)', function() {
-        const ajax = new AjaxRequest();
+        const ajax = AjaxRequest.create();
         const promise = ajax
           .request('/foo')
           .then(response => response)
