@@ -6,6 +6,6 @@ import AjaxRequest from './ajax-request';
  * @public
  */
 export default function request(url, options) {
-  const ajax = new AjaxRequest();
-  return ajax.request(url, options);
+    const ajax = AjaxRequest.create();
+    return ajax.request(url, options);
 }

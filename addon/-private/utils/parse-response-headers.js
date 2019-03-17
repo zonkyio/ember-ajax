@@ -1,16 +1,16 @@
 export const CRLF = typeof FastBoot === 'undefined' ? '\u000d\u000a' : '\n';
 export default function parseResponseHeaders(headersString) {
-  const headers = {};
-  if (!headersString) {
-    return headers;
-  }
-  return headersString.split(CRLF).reduce((hash, header) => {
-    let [field, ...value] = header.split(':');
-    field = field.trim();
-    const valueString = value.join(':').trim();
-    if (valueString) {
-      hash[field] = valueString;
+    const headers = {};
+    if (!headersString) {
+        return headers;
     }
-    return hash;
-  }, headers);
+    return headersString.split(CRLF).reduce((hash, header) => {
+        let [field, ...value] = header.split(':');
+        field = field.trim();
+        const valueString = value.join(':').trim();
+        if (valueString) {
+            hash[field] = valueString;
+        }
+        return hash;
+    }, headers);
 }

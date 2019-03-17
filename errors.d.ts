@@ -1,5 +1,4 @@
-import EmberError from '@ember/error';
-export declare class AjaxError extends EmberError {
+export declare class AjaxError extends Error {
     payload: any;
     status: number;
     constructor(payload: any, message: string | undefined, status: number);

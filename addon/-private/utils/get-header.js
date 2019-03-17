@@ -7,11 +7,11 @@ import { isNone } from '@ember/utils';
  * @private
  */
 export default function getHeader(headers, name) {
-  if (isNone(headers) || isNone(name)) {
-    return undefined;
-  }
-  const matchedKey = A(Object.keys(headers)).find(key => {
-    return key.toLowerCase() === name.toLowerCase();
-  });
-  return matchedKey ? headers[matchedKey] : undefined;
+    if (isNone(headers) || isNone(name)) {
+        return undefined;
+    }
+    const matchedKey = A(Object.keys(headers)).find(key => {
+        return key.toLowerCase() === name.toLowerCase();
+    });
+    return matchedKey ? headers[matchedKey] : undefined;
 }

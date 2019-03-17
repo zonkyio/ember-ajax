@@ -9,18 +9,18 @@ import { Promise } from 'rsvp';
  * @private
  */
 export default class AJAXPromise extends Promise {
-  // NOTE: Only necessary due to broken definition of RSVP.Promise
-  // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26640
-  constructor(executor, label) {
-    // @ts-ignore
-    super(executor, label);
-  }
-  /**
-   * Overriding `.then` to add XHR to child promise
-   */
-  then(onFulfilled, onRejected, label) {
-    const child = super.then(onFulfilled, onRejected, label);
-    child.xhr = this.xhr;
-    return child;
-  }
+    // NOTE: Only necessary due to broken definition of RSVP.Promise
+    // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26640
+    constructor(executor, label) {
+        // @ts-ignore
+        super(executor, label);
+    }
+    /**
+     * Overriding `.then` to add XHR to child promise
+     */
+    then(onFulfilled, onRejected, label) {
+        const child = super.then(onFulfilled, onRejected, label);
+        child.xhr = this.xhr;
+        return child;
+    }
 }

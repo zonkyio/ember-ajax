@@ -17,34 +17,33 @@ const completeUrlRegex = /^(http|https)/;
  * @private
  */
 export function parseURL(str) {
-  let fullObject;
-  if (typeof FastBoot === 'undefined') {
-    const element = document.createElement('a');
-    element.href = str;
-    fullObject = element;
-  } else {
-    fullObject = FastBoot.require('url').parse(str);
-  }
-  const desiredProps = {
-    href: fullObject.href,
-    protocol: fullObject.protocol,
-    hostname: fullObject.hostname,
-    port: fullObject.port,
-    pathname: fullObject.pathname,
-    search: fullObject.search,
-    hash: fullObject.hash
-  };
-  return desiredProps;
+    let fullObject;
+    if (typeof FastBoot === 'undefined') {
+        const element = document.createElement('a');
+        element.href = str;
+        fullObject = element;
+    }
+    else {
+        fullObject = FastBoot.require('url').parse(str);
+    }
+    const desiredProps = {
+        href: fullObject.href,
+        protocol: fullObject.protocol,
+        hostname: fullObject.hostname,
+        port: fullObject.port,
+        pathname: fullObject.pathname,
+        search: fullObject.search,
+        hash: fullObject.hash
+    };
+    return desiredProps;
 }
 export function isFullURL(url) {
-  return !!url.match(completeUrlRegex);
+    return !!url.match(completeUrlRegex);
 }
 export function haveSameHost(a, b) {
-  const urlA = parseURL(a);
-  const urlB = parseURL(b);
-  return (
-    urlA.protocol === urlB.protocol &&
-    urlA.hostname === urlB.hostname &&
-    urlA.port === urlB.port
-  );
+    const urlA = parseURL(a);
+    const urlB = parseURL(b);
+    return (urlA.protocol === urlB.protocol &&
+        urlA.hostname === urlB.hostname &&
+        urlA.port === urlB.port);
 }
